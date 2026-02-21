@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create CodeConnection for GitHub
+
+Resources:
+  MyCodeConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ConnectionName: GitHubConnection
+      ProviderType: GitHub
+
+Outputs:
+  CodeConnectionArn:
+    Description: ARN of the CodeStar Connection
+    Value: !GetAtt MyCodeConnection.ConnectionArn
+    Export:
+      Name: CodeConnectionArn
