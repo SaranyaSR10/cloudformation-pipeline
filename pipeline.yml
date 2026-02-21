@@ -45,7 +45,7 @@ Resources:
               Configuration:
                 ConnectionArn: !ImportValue CodeConnectionArn
                 FullRepositoryId: SaranyaSR10/cloudformation-pipeline
-                BranchName: deploy-demo
+                BranchName: my-cloudformation-pipeline
               OutputArtifacts:
                 - Name: SourceOutput
         - Name: Deploy
