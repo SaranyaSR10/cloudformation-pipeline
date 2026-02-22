@@ -25,8 +25,10 @@ Resources:
                   - s3:PutObject
                   - s3:GetBucketLocation
                 Resource:
-                  - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*"
-                  - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*/*"
+                  - !ImportValue ArtifactBucketArn
+                  - !Sub
+                      - "${BucketArn}/*"
+                      - BucketArn: !ImportValue ArtifactBucketArn
 
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
@@ -34,7 +36,13 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - cloudformation:*
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:GetTemplate
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DeleteStack
                   - iam:PassRole
                   - iam:CreateRole
                   - iam:AttachRolePolicy
@@ -45,7 +53,8 @@ Resources:
                   - s3:PutEncryptionConfiguration
                   - s3:PutBucketPublicAccessBlock
                   - s3:GetBucketPublicAccessBlock
-                Resource: "*"
+                Resource:
+                  
 
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
@@ -64,7 +73,7 @@ Resources:
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Type: S3
-        Location: !ImportValue PipelineArtifactBucketName
+        Location: !ImportValue ArtifactBucketName
       Stages:
         - Name: Source
           Actions:
@@ -98,6 +107,7 @@ Resources:
 
 Outputs:
   PipelineName:
+    Description: Name of the CodePipeline
     Value: !Ref Pipeline
     Export:
       Name: PipelineName
