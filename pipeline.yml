@@ -10,9 +10,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service:
+              Service: 
                 - codepipeline.amazonaws.com
-                - cloudformation.amazonaws.com   
+                - cloudformation.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyName: PipelineS3Access
@@ -25,30 +25,31 @@ Resources:
                   - s3:PutObject
                   - s3:GetBucketLocation
                 Resource:
-                  - !ImportValue PipelineArtifactBucketArn
-                  - !Sub "arn:aws:s3:::${ArtifactBucketName}/*"
-            Variables:
-              ArtifactBucketName: !ImportValue PipelineArtifactBucketName
-
+                  - !ImportValue ArtifactBucketArn
+                  - !Sub
+                      - "${BucketArn}/*"
+                      - BucketArn: !ImportValue ArtifactBucketArn
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:
-                  - cloudformation:*
-                  - iam:PassRole
-                  - iam:CreateRole
-                  - iam:AttachRolePolicy
-                  - iam:PutRolePolicy
-                  - s3:CreateBucket
-                  - s3:DeleteBucket
-                  - s3:PutBucketVersioning
-                  - s3:PutEncryptionConfiguration
-                  - s3:PutBucketPublicAccessBlock
-                  - s3:GetBucketPublicAccessBlock
-                Resource: "*" 
+                    - cloudformation:CreateStack
+                    - cloudformation:UpdateStack
+                    - cloudformation:DescribeStacks
+                    - cloudformation:DescribeStackEvents   
+                    - cloudformation:GetTemplate
+                    - cloudformation:ValidateTemplate
+                    - cloudformation:DeleteStack
+                    - iam:PassRole
+                    - iam:PassRole
+                    - iam:CreateRole
+                    - iam:AttachRolePolicy
+                    - iam:PutRolePolicy
 
+
+          Resource: "*"
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -60,13 +61,14 @@ Resources:
                   - codestar-connections:ListConnections
                 Resource: !ImportValue CodeConnectionArn
 
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Type: S3
-        Location: !ImportValue PipelineArtifactBucketName
+        Location: !ImportValue ArtifactBucketName
       Stages:
         - Name: Source
           Actions:
@@ -94,7 +96,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
                 TemplatePath: SourceOutput::artifactbucket.yml
-                RoleArn: !GetAtt PipelineRole.Arn   
+                RoleArn: !GetAtt PipelineRole.Arn
               InputArtifacts:
                 - Name: SourceOutput
 
