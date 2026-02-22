@@ -53,7 +53,6 @@ Resources:
                   - s3:PutEncryptionConfiguration
                   - s3:PutBucketPublicAccessBlock
                   - s3:GetBucketPublicAccessBlock
-                Resource:
                 Resource: 
                   - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*"
                   - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*/*"  
