@@ -25,6 +25,17 @@ Resources:
                 Resource:
                   - !ImportValue ArtifactBucketArn
                   - !Sub "${ArtifactBucketArn}/*"
+        - PolicyName: PipelineCFNAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - iam:PassRole
+                Resource: "*"
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -32,7 +43,7 @@ Resources:
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Type: S3
-        Location: !ImportValue ArtifactBucketArn
+        Location: !ImportValue ArtifactBucketName
       Stages:
         - Name: Source
           Actions:
@@ -60,7 +71,6 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
                 TemplatePath: SourceOutput::artifactbucket.yml
-
               InputArtifacts:
                 - Name: SourceOutput
 

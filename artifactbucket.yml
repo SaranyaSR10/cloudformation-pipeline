@@ -18,6 +18,12 @@ Resources:
         RestrictPublicBuckets: true
 
 Outputs:
+  ArtifactBucketName:
+    Description: Name of the Artifact S3 bucket
+    Value: !Ref ArtifactBucket
+    Export:
+      Name: ArtifactBucketName
+
   ArtifactBucketArn:
     Description: ARN of the Artifact S3 bucket
     Value: !GetAtt ArtifactBucket.Arn
