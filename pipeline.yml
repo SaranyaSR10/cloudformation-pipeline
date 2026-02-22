@@ -38,7 +38,7 @@ Resources:
                     - cloudformation:CreateStack
                     - cloudformation:UpdateStack
                     - cloudformation:DescribeStacks
-                    - cloudformation:DescribeStackEvents   # <-- Add this
+                    - cloudformation:DescribeStackEvents   
                     - cloudformation:GetTemplate
                     - cloudformation:ValidateTemplate
                     - cloudformation:DeleteStack
