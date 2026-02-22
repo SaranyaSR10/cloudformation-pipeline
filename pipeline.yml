@@ -35,16 +35,21 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - cloudformation:CreateStack
-                  - cloudformation:UpdateStack
-                  - cloudformation:DescribeStacks
-                  - iam:PassRole
-                  - iam:PassRole
-                  - iam:CreateRole
-                  - iam:AttachRolePolicy
-                  - iam:PutRolePolicy
+                    - cloudformation:CreateStack
+                    - cloudformation:UpdateStack
+                    - cloudformation:DescribeStacks
+                    - cloudformation:DescribeStackEvents   # <-- Add this
+                    - cloudformation:GetTemplate
+                    - cloudformation:ValidateTemplate
+                    - cloudformation:DeleteStack
+                    - iam:PassRole
+                    - iam:PassRole
+                    - iam:CreateRole
+                    - iam:AttachRolePolicy
+                    - iam:PutRolePolicy
 
-                Resource: "*"
+
+          Resource: "*"
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
