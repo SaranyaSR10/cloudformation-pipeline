@@ -10,9 +10,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: 
+              Service:
                 - codepipeline.amazonaws.com
-                - cloudformation.amazonaws.com
+                - cloudformation.amazonaws.com   
             Action: sts:AssumeRole
       Policies:
         - PolicyName: PipelineS3Access
@@ -29,25 +29,26 @@ Resources:
                   - !Sub
                       - "${BucketArn}/*"
                       - BucketArn: !ImportValue ArtifactBucketArn
+
         - PolicyName: PipelineCFNAccess
-  PolicyDocument:
-    Version: "2012-10-17"
-    Statement:
-      - Effect: Allow
-        Action:
-          - cloudformation:CreateStack
-          - cloudformation:UpdateStack
-          - cloudformation:DescribeStacks
-          - cloudformation:DescribeStackEvents
-          - cloudformation:GetTemplate
-          - cloudformation:ValidateTemplate
-          - cloudformation:DeleteStack
-          - iam:PassRole
-          - iam:CreateRole
-          - iam:AttachRolePolicy
-          - iam:PutRolePolicy
-        Resource: "*"
-      - PolicyName: PipelineCodeStarAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:GetTemplate
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DeleteStack
+                  - iam:PassRole
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:PutRolePolicy
+                Resource: "*"   
+        - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -57,7 +58,6 @@ Resources:
                   - codestar-connections:GetConnection
                   - codestar-connections:ListConnections
                 Resource: !ImportValue CodeConnectionArn
-
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -93,7 +93,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
                 TemplatePath: SourceOutput::artifactbucket.yml
-                RoleArn: !GetAtt PipelineRole.Arn
+                RoleArn: !GetAtt PipelineRole.Arn   
               InputArtifacts:
                 - Name: SourceOutput
 
