@@ -38,6 +38,17 @@ Resources:
                   - cloudformation:DescribeStacks
                   - iam:PassRole
                 Resource: "*"
+        - PolicyName: PipelineCodeStarAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                  - codestar-connections:GetConnection
+                  - codestar-connections:ListConnections
+                Resource: !ImportValue CodeConnectionArn
+
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
