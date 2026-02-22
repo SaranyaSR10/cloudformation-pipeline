@@ -49,7 +49,7 @@ Resources:
                     - iam:PutRolePolicy
 
 
-          Resource: "*"
+                Resource: "*"
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
