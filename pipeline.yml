@@ -47,6 +47,12 @@ Resources:
                   - iam:CreateRole
                   - iam:AttachRolePolicy
                   - iam:PutRolePolicy
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:PutBucketVersioning
+                  - s3:PutEncryptionConfiguration
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:GetBucketPublicAccessBlock
                 Resource: "*"   
 
         - PolicyName: PipelineCodeStarAccess
