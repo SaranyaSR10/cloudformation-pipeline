@@ -10,7 +10,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: codepipeline.amazonaws.com
+              Service: 
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyName: PipelineS3Access
@@ -37,6 +39,11 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - iam:PassRole
+                  - iam:PassRole
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:PutRolePolicy
+
                 Resource: "*"
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
