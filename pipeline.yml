@@ -24,7 +24,9 @@ Resources:
                   - s3:GetBucketLocation
                 Resource:
                   - !ImportValue ArtifactBucketArn
-                  - !Sub "${ArtifactBucketArn}/*"
+                  - !Sub
+                      - "${BucketArn}/*"
+                      - BucketArn: !ImportValue ArtifactBucketArn
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
             Version: "2012-10-17"
