@@ -48,6 +48,7 @@ Resources:
                   - iam:AttachRolePolicy
                   - iam:PutRolePolicy
                 Resource: "*"   
+
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
