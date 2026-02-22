@@ -77,8 +77,14 @@ Resources:
                 - Name: SourceOutput
 
 Outputs:
-  PipelineArn:
-    Description: ARN of the CodePipeline
-    Value: !GetAtt Pipeline.Arn
+  PipelineName:
+    Description: Name of the CodePipeline
+    Value: !Ref Pipeline
     Export:
-      Name: PipelineArn
+      Name: PipelineName
+
+  PipelineId:
+    Description: ID of the CodePipeline
+    Value: !GetAtt Pipeline.Id
+    Export:
+      Name: PipelineId
