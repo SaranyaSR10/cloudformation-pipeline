@@ -10,7 +10,9 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: codepipeline.amazonaws.com
+              Service:
+                - codepipeline.amazonaws.com
+                - cloudformation.amazonaws.com   
             Action: sts:AssumeRole
       Policies:
         - PolicyName: PipelineS3Access
@@ -27,6 +29,7 @@ Resources:
                   - !Sub
                       - "${BucketArn}/*"
                       - BucketArn: !ImportValue ArtifactBucketArn
+
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -36,8 +39,26 @@ Resources:
                   - cloudformation:CreateStack
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:GetTemplate
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DeleteStack
                   - iam:PassRole
-                Resource: "*"
+                  - iam:CreateRole
+                  - iam:AttachRolePolicy
+                  - iam:PutRolePolicy
+                Resource: "*"   
+
+        - PolicyName: PipelineCodeStarAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - codestar-connections:UseConnection
+                  - codestar-connections:GetConnection
+                  - codestar-connections:ListConnections
+                Resource: !ImportValue CodeConnectionArn
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -73,12 +94,13 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
                 TemplatePath: SourceOutput::artifactbucket.yml
+                RoleArn: !GetAtt PipelineRole.Arn   
               InputArtifacts:
                 - Name: SourceOutput
 
 Outputs:
-  PipelineArn:
-    Description: ARN of the CodePipeline
-    Value: !GetAtt Pipeline.Arn
+  PipelineName:
+    Description: Name of the CodePipeline
+    Value: !Ref Pipeline
     Export:
-      Name: PipelineArn
+      Name: PipelineName
