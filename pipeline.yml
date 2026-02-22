@@ -82,9 +82,3 @@ Outputs:
     Value: !Ref Pipeline
     Export:
       Name: PipelineName
-
-  PipelineId:
-    Description: ID of the CodePipeline
-    Value: !GetAtt Pipeline.Id
-    Export:
-      Name: PipelineId
