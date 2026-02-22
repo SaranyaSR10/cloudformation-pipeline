@@ -30,27 +30,24 @@ Resources:
                       - "${BucketArn}/*"
                       - BucketArn: !ImportValue ArtifactBucketArn
         - PolicyName: PipelineCFNAccess
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                    - cloudformation:CreateStack
-                    - cloudformation:UpdateStack
-                    - cloudformation:DescribeStacks
-                    - cloudformation:DescribeStackEvents   
-                    - cloudformation:GetTemplate
-                    - cloudformation:ValidateTemplate
-                    - cloudformation:DeleteStack
-                    - iam:PassRole
-                    - iam:PassRole
-                    - iam:CreateRole
-                    - iam:AttachRolePolicy
-                    - iam:PutRolePolicy
-
-
-                Resource: "*"
-        - PolicyName: PipelineCodeStarAccess
+  PolicyDocument:
+    Version: "2012-10-17"
+    Statement:
+      - Effect: Allow
+        Action:
+          - cloudformation:CreateStack
+          - cloudformation:UpdateStack
+          - cloudformation:DescribeStacks
+          - cloudformation:DescribeStackEvents
+          - cloudformation:GetTemplate
+          - cloudformation:ValidateTemplate
+          - cloudformation:DeleteStack
+          - iam:PassRole
+          - iam:CreateRole
+          - iam:AttachRolePolicy
+          - iam:PutRolePolicy
+        Resource: "*"
+      - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
