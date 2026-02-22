@@ -84,6 +84,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
                 TemplatePath: SourceOutput::artifactbucket.yml
+                RoleArn: !GetAtt PipelineRole.Arn
               InputArtifacts:
                 - Name: SourceOutput
 
