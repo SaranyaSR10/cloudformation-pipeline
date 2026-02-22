@@ -25,10 +25,8 @@ Resources:
                   - s3:PutObject
                   - s3:GetBucketLocation
                 Resource:
-                  - !ImportValue PipelineArtifactBucketArn
-                  - !Sub "arn:aws:s3:::${ArtifactBucketName}/*"
-            Variables:
-              ArtifactBucketName: !ImportValue PipelineArtifactBucketName
+                  - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*"
+                  - "arn:aws:s3:::cloudformationpipelinestack-artifactbucket-*/*"
 
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
@@ -48,6 +46,7 @@ Resources:
                   - s3:PutBucketPublicAccessBlock
                   - s3:GetBucketPublicAccessBlock
                 Resource: "*"
+
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -99,7 +98,6 @@ Resources:
 
 Outputs:
   PipelineName:
-    Description: Name of the CodePipeline
     Value: !Ref Pipeline
     Export:
       Name: PipelineName
