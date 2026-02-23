@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CodePipeline with Source, Build (Linting), and Deploy stages.
+Description: CodePipeline with IAM roles created inside template
 
 Resources:
   PipelineRole:
@@ -12,8 +12,7 @@ Resources:
             Principal:
               Service:
                 - codepipeline.amazonaws.com
-                - cloudformation.amazonaws.com
-                - codebuild.amazonaws.com
+                - cloudformation.amazonaws.com   
             Action: sts:AssumeRole
       Policies:
         - PolicyName: PipelineS3Access
@@ -26,10 +25,10 @@ Resources:
                   - s3:PutObject
                   - s3:GetBucketLocation
                 Resource:
-                  - !ImportValue PipelineArtifactBucketArn
+                  - !ImportValue ArtifactBucketArn
                   - !Sub
                       - "${BucketArn}/*"
-                      - BucketArn: !ImportValue PipelineArtifactBucketArn
+                      - BucketArn: !ImportValue ArtifactBucketArn
 
         - PolicyName: PipelineCFNAccess
           PolicyDocument:
@@ -37,7 +36,13 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - cloudformation:*
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:GetTemplate
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:DeleteStack
                   - iam:PassRole
                   - iam:CreateRole
                   - iam:AttachRolePolicy
@@ -48,7 +53,7 @@ Resources:
                   - s3:PutEncryptionConfiguration
                   - s3:PutBucketPublicAccessBlock
                   - s3:GetBucketPublicAccessBlock
-                Resource: "*"
+                Resource: "*"   
 
         - PolicyName: PipelineCodeStarAccess
           PolicyDocument:
@@ -60,33 +65,6 @@ Resources:
                   - codestar-connections:GetConnection
                   - codestar-connections:ListConnections
                 Resource: !ImportValue CodeConnectionArn
-        
-        
-        - PolicyName: PipelineCodeBuildLogs
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "*"
-
-  BuildProject:
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Name: PipelineLinter
-      ServiceRole: !GetAtt PipelineRole.Arn
-      Artifacts:
-        Type: CODEPIPELINE
-      Environment:
-        Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-      Source:
-        Type: CODEPIPELINE
-      Description: Lints CloudFormation templates before deployment
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -94,7 +72,7 @@ Resources:
       RoleArn: !GetAtt PipelineRole.Arn
       ArtifactStore:
         Type: S3
-        Location: !ImportValue PipelineArtifactBucketName
+        Location: !ImportValue ArtifactBucketName
       Stages:
         - Name: Source
           Actions:
@@ -110,22 +88,6 @@ Resources:
                 BranchName: my-cloudformation-pipeline
               OutputArtifacts:
                 - Name: SourceOutput
-        
-        - Name: Build
-          Actions:
-            - Name: LintTemplates
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Provider: CodeBuild
-                Version: 1
-              Configuration:
-                ProjectName: !Ref BuildProject
-              InputArtifacts:
-                - Name: SourceOutput
-              OutputArtifacts:
-                - Name: BuildOutput
-        
         - Name: Deploy
           Actions:
             - Name: CFNDeploy
@@ -137,10 +99,10 @@ Resources:
               Configuration:
                 ActionMode: CREATE_UPDATE
                 StackName: CloudFormationPipelineStack
-                TemplatePath: BuildOutput::artifactbucket.yml
+                TemplatePath: SourceOutput::artifactbucket.yml
                 RoleArn: !GetAtt PipelineRole.Arn   
               InputArtifacts:
-                - Name: BuildOutput
+                - Name: SourceOutput
 
 Outputs:
   PipelineName:
