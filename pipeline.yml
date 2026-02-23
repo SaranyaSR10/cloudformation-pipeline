@@ -103,6 +103,23 @@ Resources:
                 RoleArn: !GetAtt PipelineRole.Arn   
               InputArtifacts:
                 - Name: SourceOutput
+  PipelineNotificationsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: PipelineNotifications
+
+  PipelineNotificationRule:
+    Type: AWS::CodeStarNotifications::NotificationRule
+    Properties:
+      Name: PipelineNotificationsRule
+      DetailType: FULL
+      Resource: !Ref Pipeline
+      EventTypeIds:
+        - codepipeline-pipeline-pipeline-execution-succeeded
+        - codepipeline-pipeline-pipeline-execution-failed
+      Targets:
+        - TargetType: SNS
+          TargetAddress: !Ref PipelineNotificationsTopic
 
 Outputs:
   PipelineName:
